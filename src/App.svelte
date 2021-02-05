@@ -1,6 +1,7 @@
 <script lang="typescript">
   import {onMount, setContext} from "svelte";
   import Router from "svelte-spa-router";
+
   import Sidebar from "./components/navigators/Sidebar.svelte";
   import Blank from "./pages/support/Blank.svelte";
   import Course from "./pages/Course.svelte";
@@ -10,6 +11,7 @@
   import Wall from "./pages/Wall.svelte";
   import Lab from "./pages/Lab.svelte";
   import AllCourses from "./pages/AllCourses.svelte";
+  import Live from "./pages/Live.svelte"
   import NotFound from "./pages/support/NotFound.svelte";
   import MainNavigator from "./components/navigators/MainNavigator.svelte";
   import Logout from "./pages/support/Logout.svelte";
@@ -40,6 +42,7 @@
     "/wall/*": Wall,
     "/authorize/": Blank,
     "/logout": Logout,
+    "/live/*": Live,
     "/search/*": Search,
     "/all/": AllCourses,
     "*": NotFound
