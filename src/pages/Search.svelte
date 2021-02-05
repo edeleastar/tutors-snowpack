@@ -5,7 +5,7 @@
   import { extractPath, isValid, searchHits } from "../services/utils/utils-search";
   import type { Lo } from "../services/course/lo";
   import { allLos } from "../services/utils/utils";
-  import { push } from "svelte-spa-router";
+  import { push } from "../components/Router";
   import { highlight_searchTerm } from "../services/value-converters/highlights";
 
   const cache: Cache = getContext("cache");

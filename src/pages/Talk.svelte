@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { location } from "svelte-spa-router";
+  import { location } from "../components/Router";
   import { getContext, onDestroy, onMount } from "svelte";
   import TalkCard from "../components/cards/TalkCard.svelte";
   import type { Lo } from "../services/course/lo";

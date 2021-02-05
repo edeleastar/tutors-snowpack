@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { location, replace, push } from "svelte-spa-router";
+  import { location, replace, push } from "../components/Router";
   import { getContext, onDestroy, onMount } from "svelte";
   import type { Lab } from "../services/course/lab";
   import type { AnalyticsService } from "../services/analytics/analytics-service";

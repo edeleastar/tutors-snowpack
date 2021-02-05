@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, getContext } from "svelte";
-  import { location } from "svelte-spa-router";
+  import { location } from "../components/Router";
   import type { Course } from "../services/course/course";
   import CardDeck from "../components/cards/CardDeck.svelte";
   import UnitCard from "../components/cards/UnitCard.svelte";

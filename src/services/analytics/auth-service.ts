@@ -1,11 +1,9 @@
-import type { AnalyticsService } from "./analytics-service";
-import { WebAuth } from "auth0-js";
-import type { Course } from "../course/course";
-import { decrypt, encrypt } from "../utils/utils";
-import { replace } from "svelte-spa-router";
-import { getKeys } from "../../environment";
-import type { IconNavBar } from "../../components/iconography/icon-lib";
-import { profile } from "../course/stores";
+import type {AnalyticsService} from "./analytics-service";
+import {WebAuth} from "auth0-js";
+import type {Course} from "../course/course";
+import {decrypt, encrypt} from "../utils/utils";
+import replace from "../../components/Router.svelte";
+import {getKeys} from "../../environment";
 
 export interface User {
   userId: string;
@@ -80,7 +78,7 @@ export function getUserId() {
 }
 
 function login() {
-  auth0.authorize({ prompt: "login", scope: "openid profile email" });
+  auth0.authorize({prompt: "login", scope: "openid profile email"});
 }
 
 function setSession(authResult: URLSearchParams) {

@@ -1,6 +1,6 @@
 <script lang="typescript">
   import {onMount, setContext} from "svelte";
-  import Router from "svelte-spa-router";
+  import Router from "./components/Router.svelte";
   import Modal from "./components/Modal.svelte"
   import Sidebar from "./components/navigators/Sidebar.svelte";
   import Blank from "./pages/support/Blank.svelte";
