@@ -1,56 +1,75 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
+  import { onMount, setContext } from "svelte";
+  import { Cache } from "./services/course/cache";
+  import { handleAuthentication } from "./services/analytics/auth-service";
+  import { AnalyticsService } from "./services/analytics/analytics-service";
+  import Router from "svelte-spa-router";
+  import Modal from "./components/thridparty/modal/Modal.svelte";
 
-  let count: number = 0;
-  onMount(() => {
-    const interval = setInterval(() => count++, 1000);
-    return () => {
-      clearInterval(interval);
-    };
+  import Course from "./pages/Course.svelte";
+  import Topic from "./pages/Topic.svelte";
+  import Talk from "./pages/Talk.svelte";
+  import Video from "./pages/Video.svelte";
+  import Wall from "./pages/Wall.svelte";
+  import Lab from "./pages/Lab.svelte";
+  import AllCourses from "./pages/AllCourses.svelte";
+  import Live from "./pages/Live.svelte"
+  import Sidebar from "./components/navigators/Sidebar.svelte";
+  import MainNavigator from "./components/navigators/MainNavigator.svelte";
+  import Blank from "./pages/support/Blank.svelte";
+  import Logout from "./pages/support/Logout.svelte";
+  import NotFound from "./pages/support/NotFound.svelte";
+
+  setContext("cache", new Cache());
+  const analytics = new AnalyticsService();
+  setContext("analytics", analytics);
+
+  onMount(async () => {
+    const path = document.location.href;
+    if (path.includes("access_token")) {
+      const token = path.substring(path.indexOf("#") + 1);
+      handleAuthentication(token, analytics);
+    }
   });
+
+  let routes = {
+    "/": Blank,
+    "/course/*": Course,
+    "/topic/*": Topic,
+    "/talk/*": Talk,
+    "/video/*": Video,
+    "/lab/*": Lab,
+    "/wall/*": Wall,
+    "/authorize/": Blank,
+    "/live/*": Live,
+    "/logout": Logout,
+    "/all/": AllCourses,
+    "*": NotFound
+  };
+
+
 </script>
 
-<div class="App">
-  <header>
-    <img src="/logo.svg" class="App-logo" alt="logo" />
-    <p>Edit <code>src/App.svelte</code> and save to reload.</p>
-    <p>Page has been open for <code>{count}</code> seconds.</p>
-    <p>
-      <a
-        class="App-link"
-        href="https://svelte.dev"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn Svelte
-      </a>
-    </p>
-  </header>
+<div class="antialiased bg-gray-50 text-gray-900 font-sans dark:bg-black dark:text-gray-100 min-h-screen">
+  <Modal>
+    <Sidebar />
+    <MainNavigator />
+    <Router {routes} />
+  </Modal>
 </div>
 
-<style type="text/postcss">
-  :global(body) {
-    @apply m-0;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  .App {
-    @apply text-center text-xl;
-  }
-  .App code {
-    @apply bg-red-200 px-1 py-2 rounded font-bold;
-  }
-  .App p {
-    @apply m-2;
+
+<style global>
+  @import 'tailwindcss/base';
+  @import 'tailwindcss/components';
+
+  .tooltip .tooltip-text {
+    @apply invisible p-1 absolute z-50 inline-block mt-12 text-sm rounded-lg border border-gray-900 bg-white text-gray-900;
   }
 
-  .App header {
-    @apply bg-white text-black flex flex-col items-center justify-center min-h-screen;
+  .tooltip:hover .tooltip-text {
+    @apply visible;
   }
-  .App-link {
-    @apply text-red-600;
-  }
-  .App-logo {
-    height: 36vmin;
-    @apply animate-pulse mb-12 pointer-events-none;
-  }
+
+  @import 'tailwindcss/utilities';
 </style>
