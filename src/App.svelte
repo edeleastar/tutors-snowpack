@@ -5,6 +5,9 @@
   import Blank from "./pages/support/Blank.svelte";
   import Course from "./pages/Course.svelte";
   import Topic from "./pages/Topic.svelte";
+  import Talk from "./pages/Talk.svelte";
+  import Video from "./pages/Video.svelte";
+  import Wall from "./pages/Wall.svelte";
 
   let count: number = 0;
   onMount(() => {
