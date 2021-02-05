@@ -8,6 +8,15 @@
   import Talk from "./pages/Talk.svelte";
   import Video from "./pages/Video.svelte";
   import Wall from "./pages/Wall.svelte";
+  import Lab from "./pages/Lab.svelte";
+  import AllCourses from "./pages/AllCourses.svelte";
+  import NotFound from "./pages/support/NotFound.svelte";
+  import MainNavigator from "./components/navigators/MainNavigator.svelte";
+  import Logout from "./pages/support/Logout.svelte";
+  import { Cache } from "./services/course/cache";
+  import { handleAuthentication } from "./services/analytics/auth-service";
+  import { AnalyticsService } from "./services/analytics/analytics-service";
+
 
   let count: number = 0;
   onMount(() => {
