@@ -1,0 +1,168 @@
+<script lang="ts">
+  import type { Lo } from "../../services/course/lo";
+  import Icon from "../iconography/Icon.svelte";
+  import { RingLoader } from "svelte-loading-spinners";
+
+  import { onDestroy, tick } from "svelte";
+  import pdfjs from "pdfjs-dist";
+  import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
+  import FileSaver from "file-saver";
+
+  export let url;
+  export let scale = 1.8;
+  export let pageNum = 1; //must be number
+
+  pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+  export let lo: Lo = null;
+  url = lo.pdf;
+  let status = "";
+
+  let canvas;
+  let page_num = 0;
+  let pageCount = 0;
+  let pdfDoc = null;
+  let pageRendering = false;
+  let pageNumPending = null;
+  let rotation = 0;
+  let totalPage = 0;
+  let interval;
+  let secondInterval;
+
+  let pages = [];
+
+  const renderPage = (num) => {
+    pageRendering = true;
+
+    pdfDoc.getPage(num).then(function(page) {
+      let viewport = page.getViewport({ scale: scale, rotation: rotation });
+      const canvasContext = canvas.getContext("2d");
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      let renderContext = {
+        canvasContext,
+        viewport
+      };
+      let renderTask = page.render(renderContext);
+
+      // Wait for rendering to finish
+      renderTask.promise.then(function() {
+        pageRendering = false;
+        if (pageNumPending !== null) {
+          // New page rendering is pending
+          // renderPage(pageNumPending);
+          if (pageNum < pdfDoc.totalPage) {
+            pages[pageNum] = canvas;
+            pageNum++;
+            pdfDoc.getPage(pageNum).then(renderPage);
+          } else {
+            for (let i = 1; i < pages.length; i++) {
+              canvas.appendChild(pages[i]);
+            }
+          }
+          pageNumPending = null;
+        }
+      });
+    });
+  };
+
+  const queueRenderPage = (num) => {
+    if (pageRendering) {
+      pageNumPending = num;
+    } else {
+      renderPage(num);
+    }
+  };
+
+  const onPrevPage = () => {
+    if (pageNum <= 1) {
+      return;
+    }
+    pageNum--;
+    queueRenderPage(pageNum);
+  };
+
+  const onNextPage = () => {
+    if (pageNum >= pdfDoc.numPages) {
+      return;
+    }
+    pageNum++;
+    queueRenderPage(pageNum);
+  };
+
+  const clockwiseRotate = () => {
+    rotation = rotation + 90;
+    queueRenderPage(pageNum);
+  };
+
+  const downloadPdf = () => {
+    let fileName = url.substring(url.lastIndexOf("/") + 1);
+    FileSaver.saveAs(url, fileName);
+  };
+
+  const initialLoad = async () => {
+    window.addEventListener("keydown", keypressInput);
+    let loadingTask = pdfjs.getDocument({ url });
+    loadingTask.promise
+      .then(async function(pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        await tick();
+        pageCount = pdfDoc.numPages;
+        totalPage = pageCount;
+        renderPage(pageNum);
+      })
+      .catch(function(error) {
+      });
+  };
+  initialLoad();
+
+  onDestroy(() => {
+    clearInterval(interval);
+    clearInterval(secondInterval);
+    window.removeEventListener("keypress", keypressInput);
+  });
+
+  function keypressInput(e) {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      onNextPage();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      onPrevPage();
+    }
+  }
+
+</script>
+
+<div class="shadow-md border rounded-lg overflow-hidden">
+  {#if pdfDoc}
+    <div class="flex justify-between items-center mx-2">
+      <div class="text-sm">
+        {pageNum} of {pdfDoc.numPages}
+      </div>
+      <div>
+        <button on:click={onPrevPage} class="px-1 py-2">
+          <Icon type="left" toolTip="Previous slide" scale="1" />
+        </button>
+        <button on:click={onNextPage} class="px-1 py-2">
+          <Icon type="right" toolTip="Next slide" scale="1" />
+        </button>
+        <button on:click={clockwiseRotate} class="px-1 py-2">
+          <Icon type="rotate" toolTip="Rotate slide 90 degrees" scale="1" />
+        </button>
+        <button on:click={downloadPdf} class="px-1 py-2">
+          <Icon type="download" toolTip="Download slide" scale="1" />
+        </button>
+        <span class="px-1 py-2">
+      <Icon link={lo.pdf} type="fullScreen" target="_blank" toolTip="Open slide full screen" scale="1" />
+    </span>
+      </div>
+    </div>
+    <canvas class="w-full" bind:this={canvas} />
+  {:else}
+    <div class="flex flex-col justify-center items-center">
+      <RingLoader size="280" color="#FF3E00" unit="px" />
+    </div>
+  {/if}
+</div>
