@@ -1,7 +1,7 @@
 <script lang="typescript">
   import {onMount, setContext} from "svelte";
   import Router from "svelte-spa-router";
-
+  import Modal from "./components/Modal.svelte"
   import Sidebar from "./components/navigators/Sidebar.svelte";
   import Blank from "./pages/support/Blank.svelte";
   import Course from "./pages/Course.svelte";
@@ -54,9 +54,11 @@
 </script>
 
 <div class="antialiased bg-gray-50 text-gray-900 font-sans dark:bg-black dark:text-gray-100 min-h-screen">
-  <Sidebar/>
-  <MainNavigator/>
-  <Router {routes}/>
+  <Modal>
+    <Sidebar />
+    <MainNavigator />
+    <Router {routes} />
+  </Modal>
 </div>
 
 <style global>

@@ -24,7 +24,6 @@
     "showdown-highlight": "^2.1.5",
     "svelte-awesome": "^2.3.0",
     "svelte-loading-spinners": "^0.1.4",
-    "svelte-simple-modal": "^0.6.1",
     "svelte-spa-router": "^3.1.0",
     "svelte-tabs": "^1.1.0"
   },

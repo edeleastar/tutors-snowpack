@@ -4,9 +4,9 @@
   import { getContext } from "svelte";
   import CalendarCard from "../../cards/CalendarCard.svelte";
 
- // const { open } = getContext("simple-modal");
+  const { open } = getContext("simple-modal");
   const showCalendar = () => {
-   // open(CalendarCard);
+    open(CalendarCard);
   };
 </script>
 
